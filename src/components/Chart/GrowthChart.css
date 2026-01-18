@@ -1,0 +1,57 @@
+.growth-section {
+  width: 100%;
+  padding: 120px 0;
+  background-color: #111111;
+  color: #ffffff;
+}
+
+.growth-container {
+  width: 90%;
+  max-width: 1200px;
+  margin: auto;
+  text-align: center;
+}
+
+.growth-title {
+  font-size: 34px;
+  margin-bottom: 20px;
+}
+
+.growth-subtext {
+  max-width: 700px;
+  margin: 0 auto 80px;
+  font-size: 15px;
+  color: #cccccc;
+}
+
+/* Chart */
+.chart-area {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  height: 300px;
+  padding: 0 40px;
+}
+
+.bar {
+  width: 14%;
+  background: linear-gradient(to top, #7a0000, #c8102e);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  position: relative;
+}
+
+.bar span {
+  position: absolute;
+  bottom: -30px;
+  font-size: 13px;
+  color: #ffffff;
+}
+
+/* Individual bar heights */
+.bar-1 { height: 60px; }
+.bar-2 { height: 110px; }
+.bar-3 { height: 170px; }
+.bar-4 { height: 230px; }
+.bar-5 { height: 280px; }

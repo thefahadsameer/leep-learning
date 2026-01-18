@@ -1,0 +1,52 @@
+.why-section {
+  width: 100%;
+  padding: 100px 0;
+  background-color: #ffffff;
+}
+
+.why-container {
+  width: 90%;
+  max-width: 1200px;
+  margin: auto;
+  text-align: center;
+}
+
+.why-container h2 {
+  font-size: 34px;
+  margin-bottom: 70px;
+}
+
+.why-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 40px;
+}
+
+.why-card {
+  text-align: center;
+  padding: 20px;
+}
+
+.icon-placeholder {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 20px;
+  background-color: #f0f0f0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+
+.why-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.why-text {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.5;
+}
