@@ -21,32 +21,31 @@
 }
 
 /* ================= LOGOUT PILL ================= */
-.logout-pill {
+/* ================= LOGOUT BUTTON (FIXED) ================= */
+.logout-btn {
   background: #ef4444;
   color: #ffffff;
   border: none;
 
-  height: 35px;
-  padding: 0 19px;
+  padding: 10px 22px;
+  height: 42px;
+
+  border-radius: 999px; /* pill shape */
+  font-size: 14px;
+  font-weight: 600;
 
   display: inline-flex;
   align-items: center;
   justify-content: center;
 
-  border-radius: 999px;
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 1;
-
   cursor: pointer;
-  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.25);
-  transition: all 0.2s ease;
+  white-space: nowrap;
 }
 
-.logout-pill:hover {
+.logout-btn:hover {
   background: #dc2626;
-  transform: translateY(-1px);
 }
+
 
 
 /* ================= CARD ================= */
@@ -144,4 +143,38 @@
   display: flex;
   gap: 6px;
   margin-top: 6px;
+  align-items: center;
 }
+
+.inline-payment input,
+.inline-payment select {
+  height: 36px;
+  padding: 0 10px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  font-size: 13px;
+}
+
+.inline-payment input {
+  width: 90px;
+}
+
+.inline-payment select {
+  width: 90px;
+}
+
+.inline-payment button {
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 8px;
+  border: none;
+  background: #2563eb;
+  color: white;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.inline-payment button:hover {
+  background: #1d4ed8;
+}
+

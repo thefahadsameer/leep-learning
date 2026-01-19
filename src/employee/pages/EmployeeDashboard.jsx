@@ -11,7 +11,12 @@ const STAGES = [
   "Fee Paid (Full)"
 ];
 
-const PAYMENT_MODES = ["UPI", "Cash", "Bank"];
+/* ✅ UPDATED PAYMENT METHODS */
+const PAYMENT_MODES = [
+  "Bank Transfer",
+  "Bank Scanner",
+  "Payment Gateway"
+];
 
 function EmployeeDashboard() {
   const navigate = useNavigate();
@@ -22,7 +27,7 @@ function EmployeeDashboard() {
   const [paymentForm, setPaymentForm] = useState({
     amount: "",
     date: "",
-    mode: "UPI"
+    mode: "Bank Transfer"
   });
 
   /* ---------- AUTH GUARD ---------- */
@@ -43,7 +48,9 @@ function EmployeeDashboard() {
           city: "Delhi",
           stage: "Interested",
           totalFee: 300000,
-          payments: [{ amount: 100000, date: "2026-01-12", mode: "UPI" }]
+          payments: [
+            { amount: 100000, date: "2026-01-12", mode: "Bank Transfer" }
+          ]
         },
         {
           id: 2,
@@ -64,19 +71,33 @@ function EmployeeDashboard() {
     localStorage.setItem("candidates", JSON.stringify(candidates));
   }, [candidates]);
 
+  /* ---------- ADMIN NOTIFY ---------- */
+  const notifyAdmin = (message, type = "INFO") => {
+    const logs = JSON.parse(localStorage.getItem("adminNotifications")) || [];
+    logs.unshift({
+      id: crypto.randomUUID(),
+      type,
+      message,
+      employee: session.name,
+      time: new Date().toISOString()
+    });
+    localStorage.setItem("adminNotifications", JSON.stringify(logs));
+  };
+
   /* ---------- HELPERS ---------- */
   const totalPaid = (payments) =>
     payments.reduce((s, p) => s + Number(p.amount), 0);
 
-  /* ---------- UPDATE ---------- */
-  const updateCandidate = (id, updates) => {
+  /* ---------- UPDATE CANDIDATE ---------- */
+  const updateCandidate = (id, updates, logMessage) => {
     setCandidates((prev) =>
       prev.map((c) => (c.id === id ? { ...c, ...updates } : c))
     );
+    if (logMessage) notifyAdmin(logMessage);
   };
 
   /* ---------- PAYMENTS ---------- */
-  const addPayment = (id) => {
+  const addPayment = (id, candidateName) => {
     if (!paymentForm.amount || !paymentForm.date) return;
 
     setCandidates((prev) =>
@@ -87,11 +108,16 @@ function EmployeeDashboard() {
       )
     );
 
-    setPaymentForm({ amount: "", date: "", mode: "UPI" });
+    notifyAdmin(
+      `${session.name} added ₹${paymentForm.amount} payment via ${paymentForm.mode} for ${candidateName}`,
+      "PAYMENT_ADDED"
+    );
+
+    setPaymentForm({ amount: "", date: "", mode: "Bank Transfer" });
     setActivePaymentRow(null);
   };
 
-  const deletePayment = (cid, index) => {
+  const deletePayment = (cid, index, amount, name) => {
     setCandidates((prev) =>
       prev.map((c) =>
         c.id === cid
@@ -99,18 +125,31 @@ function EmployeeDashboard() {
           : c
       )
     );
+
+    notifyAdmin(
+      `${session.name} deleted ₹${amount} payment for ${name}`,
+      "PAYMENT_REMOVED"
+    );
   };
 
   /* ---------- LOGOUT ---------- */
   const handleLogout = () => {
+    const logs = JSON.parse(localStorage.getItem("employeeActivityLog")) || [];
+    logs.push({
+      employeeId: session.id,
+      name: session.name,
+      email: session.email,
+      action: "LOGOUT",
+      time: new Date().toISOString()
+    });
+    localStorage.setItem("employeeActivityLog", JSON.stringify(logs));
     localStorage.removeItem("employeeSession");
     navigate("/employee/login");
   };
 
   return (
     <div className="employee-dashboard">
-      {/* ===== HEADER ===== */}
-      <div className="dashboard-header">
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
         <div>
           <h1>Employee Dashboard</h1>
           <p className="employee-sub">
@@ -118,12 +157,11 @@ function EmployeeDashboard() {
           </p>
         </div>
 
-        <button className="logout-pill" onClick={handleLogout}>
+        <button className="logout-btn" onClick={handleLogout}>
           Logout
         </button>
       </div>
 
-      {/* ===== CANDIDATES ===== */}
       <div className="leads-card">
         <h2>Candidates</h2>
 
@@ -155,7 +193,11 @@ function EmployeeDashboard() {
                       className="stage-select"
                       value={c.stage}
                       onChange={(e) =>
-                        updateCandidate(c.id, { stage: e.target.value })
+                        updateCandidate(
+                          c.id,
+                          { stage: e.target.value },
+                          `${session.name} changed stage of ${c.name} to ${e.target.value}`
+                        )
                       }
                     >
                       {STAGES.map((s) => (
@@ -170,9 +212,11 @@ function EmployeeDashboard() {
                       type="number"
                       value={c.totalFee}
                       onChange={(e) =>
-                        updateCandidate(c.id, {
-                          totalFee: Number(e.target.value)
-                        })
+                        updateCandidate(
+                          c.id,
+                          { totalFee: Number(e.target.value) },
+                          `${session.name} updated fee for ${c.name}`
+                        )
                       }
                     />
                   </td>
@@ -186,7 +230,9 @@ function EmployeeDashboard() {
                         {p.amount} ({p.mode}) – {p.date}
                         <span
                           className="payment-delete"
-                          onClick={() => deletePayment(c.id, i)}
+                          onClick={() =>
+                            deletePayment(c.id, i, p.amount, c.name)
+                          }
                         >
                           ×
                         </span>
@@ -229,7 +275,9 @@ function EmployeeDashboard() {
                             <option key={m}>{m}</option>
                           ))}
                         </select>
-                        <button onClick={() => addPayment(c.id)}>Enter</button>
+                        <button onClick={() => addPayment(c.id, c.name)}>
+                          Enter
+                        </button>
                       </div>
                     ) : (
                       <div
